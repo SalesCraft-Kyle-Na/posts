@@ -5,12 +5,12 @@ Let\'s get started.
 
 ## Get URL parameters in LWC
 
-Let\'s assume, that we have a case, where we need to get parameters from the URL in Lightning Web Component. The easiest way to do that will be to use CurrentPageReference, so we don\'t need to make any kind of magic in our code. Just simple code and we have everything that we need.
+The easiest way to get url params will be to use **CurrentPageReference**.
 
 - *currentPageReference.state* - contains the key - value pairs of URL query parameters.
 - *currentPageReference.state.parameterName* - allows to get specific param from URL.
 
-![lwc-url-params](./assets/lwc-url-params.png)
+![lwc-url-params](https://wordpress.beyondthecloud.dev/wp-content/uploads/2022/07/lwc-url-params.png)
 
 ```js
 // currentPageReference
@@ -27,9 +27,9 @@ Let\'s assume, that we have a case, where we need to get parameters from the URL
 }
 ```
 
-As you can see on the screen above. **currentPageReference** include page API Name and type from [reference_type](http://).
+As you can see in the code above - **currentPageReference** includes page API Name and [type](https://developer.salesforce.com/docs/component-library/documentation/en/lwc/reference_page_reference_type).
 
-These page reference types are supported.
+Reference page types that are supported:
 
 - App - **standard__app**
 - Lightning Component - **standard__component**
@@ -46,7 +46,6 @@ These page reference types are supported.
 **Assumptions**
 
 - Since the key-value pairs of `PageReference.state` are serialized to URL query parameters, all the values must be strings.
-  For instance number will be in the 5 format.
 - **@wire service getStateParameters will be fire automatically every time URL params will change.**
 
 ## Code
@@ -72,9 +71,9 @@ export default class MyComponentName extends LightningElement {
 }
 ```
 
-Was this helpful? Check out our other great posts [here](https://salesforceprofs.com/blog).
+Was this helpful? Check out our other great posts [here](https://www.beyondthecloud.dev/blog).
 
 ## Resources
 
-- [](https://developer.salesforce.com/docs/component-library/bundle/lightning-navigation/documentation)[https://developer.salesforce.com/docs/component-library/bundle/lightning-navigation/documentation](https://developer.salesforce.com/docs/component-library/bundle/lightning-navigation/documentation)
-- [https://developer.salesforce.com/docs/component-library/documentation/en/lwc/use_navigate_add_params_ur](https://developer.salesforce.com/docs/component-library/documentation/en/lwc/use_navigate_add_params_url)l
+- [Navigation - CurrentPageReference](https://developer.salesforce.com/docs/component-library/bundle/lightning-navigation/documentation)
+- [Add Query Parameters](https://developer.salesforce.com/docs/component-library/documentation/en/lwc/use_navigate_add_params_url)l
