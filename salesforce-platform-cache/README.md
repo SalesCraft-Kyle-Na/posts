@@ -31,20 +31,6 @@ We can highlight two types of Platform Cache namely, **Org** and **Sassion** Cac
 #### Session Cache
 
 > Stores data for individual user sessions. For example, in an app that finds customers within specified territories, the calculations that run while users browse different locations on a map are reused. Session cache lives alongside a user session. The maximum life of a session is eight hours. Session cache expires when its specified time-to-live (ttlsecs value) is reached or when the session expires after eight hours, whichever comes first. ~ **Salesforce**
-
-### Summary
-
-Type | Access | Min time-to-live | Max time-to-live | Max size of single Cached Item | Maximum local cache size for a partition (per-request)
----- | ------ |-----------------|------------------| ------------------------------ | ------------------------------------------------------
-**`Session Cache`** | Only current user | 300 seconds (5 minutes) | up to 8h (28 800 seconds)| 100 kB | 500 kB
-**`Org Cache`** | All users | 300 seconds (5 minutes) | up to 48h (172 800 seconds) | 100 kB | 1 000 kB
-- Cache isn’t persisted. There’s no guarantee against data loss. We should always check if data in cache exists and if not, retrieve data from database.
-- Cache misses can happen.
-- Partitions must adhere to the limits within Salesforce.
-- Data in the cache isn’t encrypted.
-- Some or all cache is invalidated when you modify an Apex class in your org.
-- No saving order. Two different transactions have a race, and the winner's data will be saved.
-
 ## Create Platform Cache Step by Step
 
 1. Go to `Setup` > `Platform Cache` (under Custom Code) > Click `New Platform Cache Partition`
@@ -168,8 +154,8 @@ public static String getCurrentUserProfileName() {
 
 	if (String.isBlank(userProfileName)) {
 		Profile currentUserProfile = [ SELECT Id, Name
-				 									FROM Profile
-													WHERE Id = :UserInfo.getProfileId() ];
+				 					   FROM Profile
+									   WHERE Id = :UserInfo.getProfileId() ];
 		userProfileName = currentUserProfile.Name;
         profilePartition.put(UserInfo.getProfileId(), userProfileName, 86400);
     }
@@ -202,7 +188,18 @@ String currenUserProfile = currenUserProfileDetails.Name;
 - The class that implements CacheBuilder must be non-static.
 - The doLoad(String var) method can return any value, including null. If a null value is returned, it is delivered directly to the CacheBuilder consumer and not cached.
 
----
+### Summary
+
+Type | Access | Min time-to-live | Max time-to-live | Max size of single Cached Item | Maximum local cache size for a partition (per-request)
+---- | ------ |-----------------|------------------| ------------------------------ | ------------------------------------------------------
+**`Session Cache`** | Only current user | 300 seconds (5 minutes) | up to 8h (28 800 seconds)| 100 kB | 500 kB
+**`Org Cache`** | All users | 300 seconds (5 minutes) | up to 48h (172 800 seconds) | 100 kB | 1 000 kB
+- Cache isn’t persisted. There’s no guarantee against data loss. We should always check if data in cache exists and if not, retrieve data from database.
+- Cache misses can happen.
+- Partitions must adhere to the limits within Salesforce.
+- Data in the cache isn’t encrypted.
+- Some or all cache is invalidated when you modify an Apex class in your org.
+- No saving order. Two different transactions have a race, and the winner's data will be saved.
 
 ## Use cases
 
@@ -229,7 +226,7 @@ String currenUserProfile = currenUserProfileDetails.Name;
 - Avoid calling the contains(key) method followed by the get(key) method.
 - Clear the cache only when necessary.
 
-### Limitations
+## Limitations
 
 - When the cache partition limit is reached, keys are evicted until the cache is reduced to 100% capacity. Platform Cache uses least recently used (LRU) algorithm to evict keys from the cache.
 
