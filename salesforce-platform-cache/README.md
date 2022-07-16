@@ -2,7 +2,7 @@ Hello devs,
 
 **Platform Cache** is a Salesforce feature, which allows you to provide faster performance and better reliablity. Frequently used data are stored in memory layer, so it can be easily accessed by your applications without additional SOQL or API request.
 
-# What is Cache?
+## What is Cache?
 
 **Cache** is a temporary storage, that keeps frequently using data. It makes your application really fast, because instead of retrieving data you have them at hand. In short, Cache is used to reduce the average time to access data from database/API requests.
 
