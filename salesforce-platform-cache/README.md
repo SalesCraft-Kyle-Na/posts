@@ -1,14 +1,15 @@
 Hello devs,
 
-**Platform Cache** is a Salesforce feature, which allows you provides faster performance and better reliablity. Frequently used data are stored in memory layer, so can be easily accessed by your applications without additional SOQL or API request. With Platform Cache, you can also allocate cache space so that some apps or operations don\'t steal capacity from others.
+**Platform Cache** is a Salesforce feature, which allows you to provide faster performance and better reliablity. Frequently used data are stored in memory layer, so it can be easily accessed by your applications without additional SOQL or API request.
 
 ---
 
 # What is Cache?
 
-**Cache** is a temporary storage, which keeps frequently using data. It makes your application really fast, because instead of retrieving data you have them at hand. Cache is basically, used to reduce the average time to access data from database/API requests.
+**Cache** is a temporary storage, that keeps frequently using data. It makes your application really fast, because instead of retrieving data you have them at hand. In short, Cache is used to reduce the average time to access data from database/API requests.
 
-**Real life example:** Let\'s assume that you like milk. You keep it in your fridge (**cache**), which is easily accessible and faster for whole shopping process. However, if you cannot find there your lovely milk (**data**), what you need to do? Buy a cow or go shopping (**database/API request**). ?
+**Real life example:**
+Let\'s assume that you like milk. You keep it in your fridge (**cache**), which is easily accessible. However, if you run out of milk (**data**), what you need to do? Buy a cow or go shopping (**database/API request**).
 
 ---
 
@@ -22,7 +23,7 @@ What we can cache?
 - Apex Sets, Maps.
 - Records or sObject results of SOQL query
 - API callouts data
-### Platform Cache Types
+### Types
 
 We can highlight two types of Platform Cache namely, **Org** and **Sassion** Cache.
 
@@ -38,32 +39,31 @@ Type | Access | Min time-to-live | Max time-to-live | Max size of single Cached 
 ---- | ------ |-----------------|------------------| ------------------------------ | ------------------------------------------------------
 **`Session Cache`** | Only current user | 300 seconds (5 minutes) | up to 8h (28 800 seconds)| 100 kB | 500 kB
 **`Org Cache`** | All users | 300 seconds (5 minutes) | up to 48h (172 800 seconds) | 100 kB | 1 000 kB
-- Cache isn’t persisted. There’s no guarantee against data loss. We should always check if data in cache exist and if not, retrieve data from database.
+- Cache isn’t persisted. There’s no guarantee against data loss. We should always check if data in cache exists and if not, retrieve data from database.
 - Cache misses can happen.
 - Partitions must adhere to the limits within Salesforce.
 - Data in the cache isn’t encrypted.
 - Some or all cache is invalidated when you modify an Apex class in your org.
-- No saving order. Two different transactions have a race, who win, those data will be save.
+- No saving order. Two different transactions have a race, and the winner's data will be saved.
 
 ---
 ## Create Platform Cache Step by Step
 
-### Define Platform Cache in Salesforce
 1. Go to `Setup` > `Platform Cache` (under Custom Code) > Click `New Platform Cache Partition`
 2. Define Partition `Label` and `Name`.
-3. `Default Partition` allows you write following code:
+3. `Default Partition` allows you to write following code:
     ```java
     // Instead of it:
     Cache.Session.put('local.partitionA.userFirstName', 'myDataToStoreString');
     // You can do this:
     Cache.Session.put('userFirstName', 'myDataToStoreString');
-    // userFirstName (key) will be save with 'myDataToStoreString' (value) to partition marked as default.
+    // userFirstName (key) will be saved with 'myDataToStoreString' (value) to partition marked as default.
     // We can have only one default partition.
     ```
-4. `Session Cache Allocation` here we can define storage size for Session Cache. If we will leave it `0` we will be not able to put values.
-5. `Org Cache Allocation` here we can define storage size for Org Cache. If we will leave it `0` we will be not able to put values. ![Platform Cache Partition](./assets/platform-cache.png)
+4. `Session Cache Allocation` here we can define storage size for Session Cache. If we will leave it as `0` we won't be able to put values in there.
+5. `Org Cache Allocation` here we can define storage size for Org Cache. If we will leave it as `0` we won't be able to put values in there. ![Platform Cache Partition](./assets/platform-cache.png)
 
-### Code
+## Code
 
 ```java
 public with sharing class PlatformCacheService {
@@ -151,7 +151,7 @@ public with sharing class PlatformCacheService {
 }
 ```
 
-You can wondering why I didn\'t use `profilePartition.contains(UserInfo.getProfileId())`?
+You might wonder why I didn\'t use `profilePartition.contains(UserInfo.getProfileId())`?
 
 > Avoid calling the contains(key) method followed by the get(key) method. If you intend to use the key value, simply call the get(key) method and make sure that the value is not equal to null. ~ **Salesforce**
 
@@ -202,14 +202,14 @@ String currenUserProfile = currenUserProfileDetails.Name;
 ```
 
 **Note!**
-- **When you run get `Cache.Org.get(ProfileInfoCache.class, UserInfo.getProfileId());`, Salesforce tying to find cached data by unique key and if there is no data, fire doLoad() method, caches retrived data, and then return it.**
+- **When you run get `Cache.Org.get(ProfileInfoCache.class, UserInfo.getProfileId());`, Salesforce is trying to find cached data by unique key and if there is no data, fire doLoad() method, caches retrives data, and then returns it.**
 - The doLoad(String var) method must take a String parameter, even if you do not use the parameter in the method’s code.
 - The class that implements CacheBuilder must be non-static.
 - The doLoad(String var) method can return any value, including null. If a null value is returned, it is delivered directly to the CacheBuilder consumer and not cached.
 
 ---
 
-## Platform Cache use cases?
+## Use cases
 
 - Reused throughout a session
 - Reduce number of SOQL statements
@@ -238,7 +238,7 @@ String currenUserProfile = currenUserProfileDetails.Name;
 
 ### Limitations
 
-- When the cache partition limit is reached, keys are evicted until the cache is reduced to 100% capacity. Platform Cache uses a least recently used (LRU) algorithm to evict keys from the cache.
+- When the cache partition limit is reached, keys are evicted until the cache is reduced to 100% capacity. Platform Cache uses least recently used (LRU) algorithm to evict keys from the cache.
 
 Edition | Cache Size
 --------| ----------
