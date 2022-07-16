@@ -2,16 +2,12 @@ Hello devs,
 
 **Platform Cache** is a Salesforce feature, which allows you to provide faster performance and better reliablity. Frequently used data are stored in memory layer, so it can be easily accessed by your applications without additional SOQL or API request.
 
----
-
 # What is Cache?
 
 **Cache** is a temporary storage, that keeps frequently using data. It makes your application really fast, because instead of retrieving data you have them at hand. In short, Cache is used to reduce the average time to access data from database/API requests.
 
 **Real life example:**
 Let\'s assume that you like milk. You keep it in your fridge (**cache**), which is easily accessible. However, if you run out of milk (**data**), what you need to do? Buy a cow or go shopping (**database/API request**).
-
----
 
 ## Platform Cache
 
@@ -23,6 +19,7 @@ What we can cache?
 - Apex Sets, Maps.
 - Records or sObject results of SOQL query
 - API callouts data
+
 ### Types
 
 We can highlight two types of Platform Cache namely, **Org** and **Sassion** Cache.
@@ -30,9 +27,11 @@ We can highlight two types of Platform Cache namely, **Org** and **Sassion** Cac
 #### Org Cache
 
 > Stores data that any user in an org reuses. For example, the contents of navigation bars that dynamically display menu items based on user profile are reused. Unlike session cache, org cache is accessible across sessions, requests, and org users and profiles. Org cache expires when its specified time-to-live (ttlsecs value) is reached. ~ **Salesforce**
+
 #### Session Cache
 
 > Stores data for individual user sessions. For example, in an app that finds customers within specified territories, the calculations that run while users browse different locations on a map are reused. Session cache lives alongside a user session. The maximum life of a session is eight hours. Session cache expires when its specified time-to-live (ttlsecs value) is reached or when the session expires after eight hours, whichever comes first. ~ **Salesforce**
+
 ### Summary
 
 Type | Access | Min time-to-live | Max time-to-live | Max size of single Cached Item | Maximum local cache size for a partition (per-request)
@@ -46,7 +45,6 @@ Type | Access | Min time-to-live | Max time-to-live | Max size of single Cached 
 - Some or all cache is invalidated when you modify an Apex class in your org.
 - No saving order. Two different transactions have a race, and the winner's data will be saved.
 
----
 ## Create Platform Cache Step by Step
 
 1. Go to `Setup` > `Platform Cache` (under Custom Code) > Click `New Platform Cache Partition`
@@ -155,8 +153,6 @@ You might wonder why I didn\'t use `profilePartition.contains(UserInfo.getProfil
 
 > Avoid calling the contains(key) method followed by the get(key) method. If you intend to use the key value, simply call the get(key) method and make sure that the value is not equal to null. ~ **Salesforce**
 
----
-
 ## Cache.CacheBuilder Interface
 
 > A Platform Cache best practice is to ensure that your Apex code handles cache misses by testing for cache requests that return null. You can write this code yourself. Or, you can use the Cache.CacheBuilder interface, which makes it easy to safely store and retrieve values to a session or org cache. ~ **Salesforce**
@@ -172,8 +168,8 @@ public static String getCurrentUserProfileName() {
 
 	if (String.isBlank(userProfileName)) {
 		Profile currentUserProfile = [ SELECT Id, Name
-				 					   FROM Profile
-									   WHERE Id = :UserInfo.getProfileId() ];
+				 									FROM Profile
+													WHERE Id = :UserInfo.getProfileId() ];
 		userProfileName = currentUserProfile.Name;
         profilePartition.put(UserInfo.getProfileId(), userProfileName, 86400);
     }
@@ -195,7 +191,6 @@ public class ProfileInfoCache implements Cache.CacheBuilder {
                           WHERE Id = :profileId ];
     }
 }
-
 // Use
 Profile currenUserProfileDetails = (Profile) Cache.Org.get(ProfileInfoCache.class, UserInfo.getProfileId());
 String currenUserProfile = currenUserProfileDetails.Name;
@@ -226,8 +221,6 @@ String currenUserProfile = currenUserProfileDetails.Name;
 - Total volunteering hours company employees did as a whole
 - Top sales ranking
 
----
-
 ## Best Practices
 
 - Ensure that your code handles cache misses by testing cache requests that return null.
@@ -250,6 +243,10 @@ Limit | Value
 ------| ----------
 Minimum partition size | 1 MB
 
+## Repository
+
+[Github](https://github.com/beyond-the-cloud-dev/posts/blob/main/salesforce-platform-cache/apex/PlatformCacheService.cls)
+
 ---
 
 Was it helpful? Check out our other great posts [here](https://beyondthecloud.dev/blog).
@@ -265,5 +262,3 @@ Was it helpful? Check out our other great posts [here](https://beyondthecloud.de
 - [Org Class](https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_class_cache_Org.htm#apex_class_cache_Org)
 - [Session Class](https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_class_cache_Session.htm#apex_class_cache_Session)
 - [SessionPartition Class](https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_class_cache_SessionPartition.htm#apex_class_cache_SessionPartition)
-
----
