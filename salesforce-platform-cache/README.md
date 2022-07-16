@@ -1,8 +1,6 @@
 Hello devs,
-plat
-**Platform Cache** is a Salesforce feature, which allows you provides faster performance and better reliablity. Frequently used data are stored in memory layer, so can be easily accessed by your applications without additional SOQL or API request. With Platform Cache, you can also allocate cache space so that some apps or operations don\'t steal capacity from others.
 
-Let\'s begin.
+**Platform Cache** is a Salesforce feature, which allows you provides faster performance and better reliablity. Frequently used data are stored in memory layer, so can be easily accessed by your applications without additional SOQL or API request. With Platform Cache, you can also allocate cache space so that some apps or operations don\'t steal capacity from others.
 
 ---
 
@@ -10,152 +8,30 @@ Let\'s begin.
 
 **Cache** is a temporary storage, which keeps frequently using data. It makes your application really fast, because instead of retrieving data you have them at hand. Cache is basically, used to reduce the average time to access data from database/API requests.
 
-**Real life example:** Let\'s assume that you like milk ?. You keep it in your fridge (**cache**), which is easily accessible and faster for whole shopping process. However, if you cannot find there your lovely milk (**data**), what you need to do? Buy a cow or go shopping (**database/API request**). ?
+**Real life example:** Let\'s assume that you like milk. You keep it in your fridge (**cache**), which is easily accessible and faster for whole shopping process. However, if you cannot find there your lovely milk (**data**), what you need to do? Buy a cow or go shopping (**database/API request**). ?
 
 ---
 
 ## Platform Cache
 
-> The Platform Cache API lets you store and retrieve data that’s tied to Salesforce sessions or shared across your org. Put, retrieve, or remove cache values by using the Session, Org, SessionPartition, and OrgPartition classes in the Cache namespace. ~ **Salesforce** What we can cache? - Static data as object metadata or user profile - Apex list of sObjects, String, Integers, etc. - Apex Sets, Maps. - Records or sObject results of SOQL query - API callouts data ### Platform Cache Types In Salesforce we can highlight two types of Platform Cache namely, **Org** and **Sassion** Cache.
+> The Platform Cache API lets you store and retrieve data that’s tied to Salesforce sessions or shared across your org. Put, retrieve, or remove cache values by using the Session, Org, SessionPartition, and OrgPartition classes in the Cache namespace. ~ **Salesforce**
+
+What we can cache?
+- Static data as object metadata or user profile
+- Apex list of sObjects, String, Integers, etc.
+- Apex Sets, Maps.
+- Records or sObject results of SOQL query
+- API callouts data
+### Platform Cache Types
+
+We can highlight two types of Platform Cache namely, **Org** and **Sassion** Cache.
 
 #### Org Cache
 
 > Stores data that any user in an org reuses. For example, the contents of navigation bars that dynamically display menu items based on user profile are reused. Unlike session cache, org cache is accessible across sessions, requests, and org users and profiles. Org cache expires when its specified time-to-live (ttlsecs value) is reached. ~ **Salesforce**
-
-```java
-// *****************************************************************************************************************
-// General Rules for Platform Cache in Apex Code
-// Org Class
-// PUT
-Cache.Org.put('NAMESPACE_PREFIX_HERE.PARTITION_NAME_HERE.YOUR_KEY_HERE', YOUR_VALUE_HERE);
-// GET
-Cache.Org.get('NAMESPACE_PREFIX_HERE.PARTITION_NAME_HERE.YOUR_KEY_HERE');
-
-// OrgPartition Class
-// PUT
-Cache.OrgPartition VAR_NAME = Cache.Org.getPartition('NAMESPACE_PREFIX_HERE.PARTITION_NAME_HERE');
-VAR_NAME.put('YOUR_KEY_HERE', YOUR_VALUE_HERE);
-// GET
-Cache.OrgPartition VAR_NAME = Cache.Org.getPartition('NAMESPACE_PREFIX_HERE.PARTITION_NAME_HERE');
-VAR_NAME.get('YOUR_KEY_HERE');
-// *****************************************************************************************************************
-
-//Example:
-String namespace = 'local';
-String partitionAName = 'partitionA';
-String partitionACacheBase = namespace + '.' + partitionAName; //'local.partitionA'
-String firstNameKey = 'userFirstName';
-String lastNameKey = 'userLastName';
-
-String myFirstNameFromCache = null;
-String myLastNameFromCache = null;
-
-String firstNameCacheKey = partitionACacheBase + '.' + firstNameKey; //'local.partitionA.userFirstName'
-String lastNameCacheKey = partitionACacheBase + '.' + lastNameKey; //'local.partitionA.userLastName'
-
-// ORG CACHE
-// Partition A | Cache.Org methods
-Cache.Org.put(firstNameCacheKey, 'OrgPlatform');
-Cache.Org.put(lastNameCacheKey, 'OrgCache');
-
-if (Cache.Org.contains(firstNameCacheKey)) {
-    myFirstNameFromCache = (String) Cache.Org.get(firstNameCacheKey);
-}
-if (Cache.Org.contains(lastNameCacheKey)) {
-    myLastNameFromCache = (String) Cache.Org.get(lastNameCacheKey);
-}
-
-System.debug('------ Cache.Org methods ------');
-System.debug('myFirstNameFromCache: ' + myFirstNameFromCache);
-System.debug('myLastNameFromCache: ' + myLastNameFromCache);
-
-// Partition A | Cache.OrgPartition methods
-Cache.OrgPartition orgAPartition = Cache.Org.getPartition(partitionACacheBase); //'local.partitionA'
-
-orgAPartition.put(firstNameKey, 'OrgSalesforce');
-orgAPartition.put(lastNameKey, 'OrgProfs');
-
-if (orgAPartition.contains(firstNameKey)) {
-    myFirstNameFromCache = (String) orgAPartition.get(firstNameKey);
-}
-if (orgAPartition.contains(lastNameKey)) {
-    myLastNameFromCache = (String) orgAPartition.get(lastNameKey);
-}
-
-System.debug('------ Cache.OrgPartition methods ------');
-System.debug('myFirstNameFromCache: ' + myFirstNameFromCache);
-System.debug('myLastNameFromCache: ' + myLastNameFromCache);
-```
-
 #### Session Cache
 
 > Stores data for individual user sessions. For example, in an app that finds customers within specified territories, the calculations that run while users browse different locations on a map are reused. Session cache lives alongside a user session. The maximum life of a session is eight hours. Session cache expires when its specified time-to-live (ttlsecs value) is reached or when the session expires after eight hours, whichever comes first. ~ **Salesforce**
-
-```java
-// *****************************************************************************************************************
-// General Rules for Platform Cache in Apex Code
-// Session Class
-// PUT
-Cache.Session.put('NAMESPACE_PREFIX_HERE.PARTITION_NAME_HERE.YOUR_KEY_HERE', YOUR_VALUE_HERE);
-// GET
-Cache.Session.get('NAMESPACE_PREFIX_HERE.PARTITION_NAME_HERE.YOUR_KEY_HERE');
-
-// SessionPartition Class
-// PUT
-Cache.SessionPartition VAR_NAME = Cache.Session.getPartition('NAMESPACE_PREFIX_HERE.PARTITION_NAME_HERE');
-VAR_NAME.put('YOUR_KEY_HERE', YOUR_VALUE_HERE);
-// GET
-Cache.OrgPartition VAR_NAME = Cache.Session.getPartition('NAMESPACE_PREFIX_HERE.PARTITION_NAME_HERE');
-VAR_NAME.get('YOUR_KEY_HERE');
-// *****************************************************************************************************************
-
-//Example:
-String namespace = 'local';
-String partitionAName = 'partitionA';
-String partitionACacheBase = namespace + '.' + partitionAName; //'local.partitionA'
-String firstNameKey = 'userFirstName';
-String lastNameKey = 'userLastName';
-
-String myFirstNameFromCache = null;
-String myLastNameFromCache = null;
-
-String firstNameCacheKey = partitionACacheBase + '.' + firstNameKey; //'local.partitionA.userFirstName'
-String lastNameCacheKey = partitionACacheBase + '.' + lastNameKey; //'local.partitionA.userLastName'
-
-// SESSION CACHE
-// Partition A | Cache.Session methods
-Cache.Session.put(firstNameCacheKey, 'SessionPlatform'); // Cache.Session.put('local.partitionA.userFirstName', 'SessionPlatform');
-Cache.Session.put(lastNameCacheKey, 'SessionCache'); // Cache.Session.put('local.partitionA.userLastName', 'SessionPlatform');
-
-if (Cache.Session.contains(firstNameCacheKey)) {
-    myFirstNameFromCache = (String) Cache.Session.get(firstNameCacheKey);
-}
-if (Cache.Session.contains(lastNameCacheKey)) {
-    myLastNameFromCache = (String) Cache.Session.get(lastNameCacheKey);
-}
-
-System.debug('------ Cache.Session methods ------');
-System.debug('myFirstNameFromCache: ' + myFirstNameFromCache);
-System.debug('myLastNameFromCache: ' + myLastNameFromCache);
-
-// Partition A | Cache.SessionPartition methods
-Cache.SessionPartition sessionAPartition = Cache.Session.getPartition(partitionACacheBase); //'local.partitionA'
-
-sessionAPartition.put(firstNameKey, 'SessionSalesforce');
-sessionAPartition.put(lastNameKey, 'SessionProfs');
-
-if (sessionAPartition.contains(firstNameKey)) {
-    myFirstNameFromCache = (String) sessionAPartition.get(firstNameKey);
-}
-if (sessionAPartition.contains(lastNameKey)) {
-    myLastNameFromCache = (String) sessionAPartition.get(lastNameKey);
-}
-
-System.debug('------ Cache.SessionPartition methods ------');
-System.debug('myFirstNameFromCache: ' + myFirstNameFromCache);
-System.debug('myLastNameFromCache: ' + myLastNameFromCache);
-```
-
 ### Summary
 
 Type | Access | Min time-to-live | Max time-to-live | Max size of single Cached Item | Maximum local cache size for a partition (per-request)
@@ -170,7 +46,7 @@ Type | Access | Min time-to-live | Max time-to-live | Max size of single Cached 
 - No saving order. Two different transactions have a race, who win, those data will be save.
 
 ---
-## Create Platform Cache Step by Step?
+## Create Platform Cache Step by Step
 
 ### Define Platform Cache in Salesforce
 1. Go to `Setup` > `Platform Cache` (under Custom Code) > Click `New Platform Cache Partition`
@@ -187,74 +63,91 @@ Type | Access | Min time-to-live | Max time-to-live | Max size of single Cached 
 4. `Session Cache Allocation` here we can define storage size for Session Cache. If we will leave it `0` we will be not able to put values.
 5. `Org Cache Allocation` here we can define storage size for Org Cache. If we will leave it `0` we will be not able to put values. ![Platform Cache Partition](./assets/platform-cache.png)
 
-### Prepare Your Apex Code
-```js
-// General Rules for Platform Cache in Apex Code
-// PUT
-Cache.CACHE_TYPE_HERE.put('NAMESPACE_PREFIX_HERE.PARTITION_NAME_HERE.YOUR_KEY_HERE', YOUR_VALUE_HERE);
-// GET
-Cache.CACHE_TYPE_HERE.get('NAMESPACE_PREFIX_HERE.PARTITION_NAME_HERE.YOUR_KEY_HERE');
-
-// Partition Class
-// PUT
-Cache.CACHE_TYPEPartition VAR_NAME = Cache.CACHE_TYPE.getPartition('NAMESPACE_PREFIX_HERE.PARTITION_NAME_HERE');
-VAR_NAME.put('YOUR_KEY_HERE', YOUR_VALUE_HERE);
-// GET
-Cache.CACHE_TYPEPartition VAR_NAME = Cache.CACHE_TYPE.getPartition('NAMESPACE_PREFIX_HERE.PARTITION_NAME_HERE');
-VAR_NAME.get('YOUR_KEY_HERE');
-
-// Examples:
-// Session Class
-Cache.Session.put('local.partitionA.userFirstName', 'Session-Salesfroce');
-Cache.Session.put('local.partitionA.userLastName', 'Session-Profs');
-
-String firstNameFromSessionCache = Cache.Session.get('local.partitionA.userFirstName', 'Session-Salesfroce');
-String lastNameFromSessionCache = Cache.Session.get('local.partitionA.userLastName', 'Session-Profs');
-
-// Session Partition Class
-Cache.SessionPartition sessionAPartition = Cache.Session.getPartition('local.partitionA');
-
-sessionAPartition.put('userFirstName', 'SessionSalesforce');
-sessionAPartition.put('userLastName', 'SessionProfs');
-
-String firstNameFromSessionCache = (String) sessionAPartition.get('userFirstName');
-String lastNameFromSessionCache = (String) sessionAPartition.get('userLastName');
-
-// Org Class
-Cache.Org.put('local.partitionA.userFirstName');
-Cache.Org.put('local.partitionA.userLastName');
-
-String firstNameFromOrgCache = Cache.Org.get('local.partitionA.userFirstName');
-String lastNameFromOrgCache = Cache.Org.get('local.partitionA.userLastName');
-
-// Org Partition Class
-Cache.OrgPartition orgAPartition = Cache.Org.getPartition('local.partitionA');
-
-orgAPartition.put('userFirstName', 'SessionSalesforce');
-orgAPartition.put('userLastName', 'SessionProfs');
-
-String firstNameFromSessionCache = (String) orgAPartition.get('userFirstName');
-String lastNameFromSessionCache = (String) orgAPartition.get('userLastName');
-```
-
-### Apex method with cache logic
+### Code
 
 ```java
-public static String getUserProfileName() {
+public with sharing class PlatformCacheService {
+    // fullCacheName - NAMESPACE_PREFIX.PARTITION_NAME.YOUR_KEY
+    // partitionName - NAMESPACE_PREFIX.PARTITION_NAM
+    // cacheKey - YOUR_KEY
 
-	Cache.OrgPartition profilePartition = Cache.Org.getPartition('local.ProfileData'); // ProfileData is my partition name
+    //Org
 
-	String userProfileName = (String) profilePartition.get(UserInfo.getProfileId());
-
-	if (String.isBlank(userProfileName)) {
-		Profile currentUserProfile = [ SELECT Id, Name
-				 					   FROM Profile
-									   WHERE Id = :UserInfo.getProfileId() ];
-		userProfileName = currentUserProfile.Name;
-        profilePartition.put(UserInfo.getProfileId(), userProfileName, 86400);
+    public static void putToOrgCache(String fullCacheName, Object value) {
+        Cache.Org.put(fullCacheName, value);
     }
 
-	return userProfileName;
+    public static Object getOrgCache(String fullCacheName) {
+        return Cache.Org.get(fullCacheName);
+    }
+
+    public static void putToOrgByPartitionClass(String partitionName, String cacheKey, Object value) {
+        Cache.OrgPartition orgPartition = Cache.Org.getPartition(partitionName);
+        orgPartition.put(cacheKey, value);
+    }
+
+    public static Object getOrgByPartitionClass(String partitionName, String cacheKey) {
+        Cache.OrgPartition orgPartition = Cache.Org.getPartition(partitionName);
+        return orgPartition.get(cacheKey);
+    }
+
+    //Session
+
+    public static void putToSessionCache(String fullCacheName, Object value) {
+        Cache.Session.put(fullCacheName, value);
+    }
+
+    public static Object getSessionCache(String fullCacheName) {
+        return Cache.Session.get(fullCacheName);
+    }
+
+    public static void putToSessionByPartitionClass(String partitionName, String cacheKey, Object value) {
+        Cache.SessionPartition orgPartition = Cache.Session.getPartition(partitionName);
+        orgPartition.put(cacheKey, value);
+    }
+
+    public static Object getSessionByPartitionClass(String partitionName, String cacheKey) {
+        Cache.SessionPartition orgPartition = Cache.Session.getPartition(partitionName);
+        return orgPartition.get(cacheKey);
+    }
+
+    // Use Case
+
+    public static String orgCacheExample() {
+        String namespace = 'local';
+        String partitionName = 'partitionName';
+        String key = 'cacheKey';
+        String value = 'valueToCache';
+
+        String fullCacheName = namespace + partitionName + key;
+
+        String myCachedValue = (String) Cache.Org.get(fullCacheName);
+
+        if (myCachedValue == null) {
+            Cache.Org.put(fullCacheName, value);
+            myCachedValue = value;
+        }
+
+        return myCachedValue;
+    }
+
+    public static String sessionCacheExample() {
+        String namespace = 'local';
+        String partitionName = 'partitionName';
+        String key = 'cacheKey';
+        String value = 'valueToCache';
+
+        String fullCacheName = namespace + partitionName + key;
+
+        String myCachedValue = (String) Cache.Session.get(fullCacheName);
+
+        if (myCachedValue == null) {
+            Cache.Session.put(fullCacheName, value);
+            myCachedValue = value;
+        }
+
+        return myCachedValue;
+    }
 }
 ```
 
@@ -264,11 +157,11 @@ You can wondering why I didn\'t use `profilePartition.contains(UserInfo.getProfi
 
 ---
 
-## Cache.CacheBuilder Interface?
+## Cache.CacheBuilder Interface
 
 > A Platform Cache best practice is to ensure that your Apex code handles cache misses by testing for cache requests that return null. You can write this code yourself. Or, you can use the Cache.CacheBuilder interface, which makes it easy to safely store and retrieve values to a session or org cache. ~ **Salesforce**
 
-We can transform my method:
+From:
 
 ```java
 public static String getCurrentUserProfileName() {
@@ -292,7 +185,8 @@ public static String getCurrentUserProfileName() {
 String currenUserProfile = getCurrentUserProfileName();
 ```
 
-to the following Apex Class:
+To:
+
 ```java
 public class ProfileInfoCache implements Cache.CacheBuilder {
     public Object doLoad(String profileId) {
@@ -334,7 +228,7 @@ String currenUserProfile = currenUserProfileDetails.Name;
 
 ---
 
-## Platform Cache Best Practices?
+## Best Practices
 
 - Ensure that your code handles cache misses by testing cache requests that return null.
 - To help improve performance, perform cache operations on a list of keys rather than on individual keys.
