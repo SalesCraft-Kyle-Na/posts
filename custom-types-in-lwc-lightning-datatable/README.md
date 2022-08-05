@@ -212,7 +212,7 @@ export default class MyDataTable extends LightningElement {
 
 ## Repository
 
-[Github](https://github.com/pgajek2/custom-lightning-datatable-type)
+[Github](https://github.com/beyond-the-cloud-dev/posts/tree/main/custom-types-in-lwc-lightning-datatable/lwc)
 
 ---
 
