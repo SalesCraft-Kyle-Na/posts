@@ -1,5 +1,6 @@
 Hi guys,
-Today I gonna show you how to define a custom data type in lightning-datatable and how to use it.
+How to define a custom data type in lightning-datatable and how to use it?
+Let's begin!
 
 ## What lightning-datatable is?
 
@@ -34,7 +35,6 @@ but sometimes we will have to create our own type to fulfill the client\'s requi
 
 ![Custom](./assets/custom-lightning-datatable.png)
 
-
 ### Structure
 
 ```text
@@ -56,8 +56,8 @@ but sometimes we will have to create our own type to fulfill the client\'s requi
         customTypeB.js-meta.xml
 ```
 
-- `customLightningDatatable` - extends `LightningDatatable` and contains cell custom types.
-- `/templates` - contains all custom types. Not necessary, but nice way to have structure.
+- `customLightningDatatable` - extends `LightningDatatable`, contains cell custom types and configuration.
+- `/templates` - contains all custom types.
 
 ### 1. Create a Custom Data Type
 
@@ -109,7 +109,6 @@ export default class CustomTypeA extends LightningElement {
 
 ```js
 import LightningDatatable from 'lightning/datatable';
-
 
 export default class CustomLightningDatatable extends LightningDatatable {
     static customTypes = {}
@@ -173,21 +172,8 @@ import { LightningElement, track } from 'lwc';
 export default class MyDataTable extends LightningElement {
 
     columns = [
-        {
-            label: 'Record Name',
-            fieldName: 'name',
-            type: 'text'
-        },
-        {
-            label: 'Custom Type A',
-            fieldName: 'id',
-            type: 'customTypeA',
-            typeAttributes: {
-                customValueA: {
-                    fieldName: 'index'
-                }
-            }
-        }
+        { label: 'Record Name', fieldName: 'name', type: 'text' },
+        { label: 'Custom Type A', fieldName: 'id', type: 'customTypeA', typeAttributes: { customValueA: { fieldName: 'index' }}}
     ];
 
     @track data = [
