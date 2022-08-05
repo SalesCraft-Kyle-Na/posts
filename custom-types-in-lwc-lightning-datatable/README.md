@@ -5,7 +5,7 @@ Today I gonna show you how to define a custom data type in lightning-datatable a
 
 > A table that displays rows and columns of data. ~ Salesforce
 
-![datatable](https://salesforceprofs.com/wp-content/uploads/2020/05/image-4-1024x188.png)
+![datatable](./assets/lightning-datatable.png)
 
 We have many predefined types like:
 
@@ -28,15 +28,40 @@ but sometimes we will have to create our own type to fulfill the client\'s requi
 
 ## Architecture
 
-![custom](https://salesforceprofs.com/wp-content/uploads/2020/05/image-7.png)
+![custom](./assets/custom-lightning-datatable-architecture.png)
 
 ## How to define a custom type?
 
-![Custom](https://salesforceprofs.com/wp-content/uploads/2020/09/image-1024x307.png)
+![Custom](./assets/custom-lightning-datatable.png)
 
-### 1. Create a Custom Data Type component
 
-.HTML file contains how table cell will look like. It can be whatever you want. e.g button, picklist, link, etc.
+### Structure
+
+```text
+/lwc
+    /customLightningDatatable
+        /templates
+            customTypeA.html
+            customTypeB.html
+        customLightningDatatable.html
+        customLightningDatatable.js
+        customLightningDatatable.js-meta.xml
+    /customTypeA
+        customTypeA.html
+        customTypeA.js
+        customTypeA.js-meta.xml
+    /customTypeB
+        customTypeB.html
+        customTypeB.js
+        customTypeB.js-meta.xml
+```
+
+- `customLightningDatatable` - extends `LightningDatatable` and contains cell custom types.
+- `/templates` - contains all custom types. Not necessary, but nice way to have structure.
+
+### 1. Create a Custom Data Type
+
+- `.html` file contains how table cell will look like. It can be whatever you want. e.g button, picklist, link, etc.
 
 ```html
 <template>
@@ -46,7 +71,7 @@ but sometimes we will have to create our own type to fulfill the client\'s requi
 </template>
 ```
 
-.js file contain typeAttributes and event, which is fire after cell click. Of course, onclick is optional, you can just display data, without custom event sent to parent.
+- `.js` file contains typeAttributes (as `@api` params). Event is optional - it's a way to make cell interactive. Not just display data.
 
 ```js
 import { LightningElement, api } from 'lwc';
@@ -58,6 +83,7 @@ export default class CustomTypeA extends LightningElement {
 
     fireCustomTypeA() {
         let newCustomValueA = this.customValueA + 1;
+
         const event = new CustomEvent('customtypea', {
             composed: true,
             bubbles: true,
@@ -67,19 +93,35 @@ export default class CustomTypeA extends LightningElement {
                 newCustomValueA: newCustomValueA
             },
         });
+
         this.dispatchEvent(event);
     }
 }
 ```
 
-### 2. Creating a Custom Type Template
+### 2. Create a Custom Lightning Datatable
 
-`.HTML` file, which using custom type component created in step number 1. If our component contains some public properties, they can be pass here.
-The file should be created in the same place (folder) as the custom lightning datatable described in step 3.
+- Custom datatable should extends `LightningDatatable` module.
 
-**Important!**
-*value* is what we used in *key-field=FIELD* in step 4 HTML.
-Usually, it is the record Id: *key-field=Id*. This is why in my example I assigned value to record-id.
+```html
+<template></template>
+```
+
+```js
+import LightningDatatable from 'lightning/datatable';
+
+
+export default class CustomLightningDatatable extends LightningDatatable {
+    static customTypes = {}
+}
+```
+
+### 3. Create a Custom Type Template
+
+- Use component created in step 1.
+- `value` comes from `fieldName` (columns configuration).
+- You can pass more values to custom cell by adding `typeAttributes`.
+- Place `.html` under `template` -> `template/customTypeA.html`
 
 ```html
 <template>
@@ -90,32 +132,29 @@ Usually, it is the record Id: *key-field=Id*. This is why in my example I assign
 </template>
 ```
 
-### 3. Create Custom Lightning Datatable
+### 4. Use Custom Type in Custom Lightning Datatable
 
-Out custom datatable, which import templates created in step 2, and configuration for them.
+- Custom datatable should import Custom Type created in step 3.
+- Add configuration to `customTypes` so you can pass more values as `typeAttributes`.
 
 ```js
 import LightningDatatable from 'lightning/datatable';
-import customTypeA from './customTypeA';
-import customTypeB from './customTypeB';
+import customTypeA from './templates/customTypeA';
 
 export default class CustomLightningDatatable extends LightningDatatable {
     static customTypes = {
         customTypeA: {
             template: customTypeA,
-            typeAttributes: ['recordId', 'customValueA']
-        },
-        customTypeB: {
-            template: customTypeB,
-            typeAttributes: ['recordId']
+            typeAttributes: ['customValueA']
         }
     }
 }
 ```
 
-#### 4. Use Custom Lightning Datatable
+#### 5. Use Custom Lightning Datatable
 
-Use case of the custom data table created in step 3. It contains all standard properties (the same as standard datatable) and our own like custom events.
+- Use case of the custom data table created in step 4.
+- It contains all standard properties (the same as standard datatable) and our own like custom events.
 
 ```html
 <template>
@@ -123,8 +162,7 @@ Use case of the custom data table created in step 3. It contains all standard pr
                                   data={data}
                                   columns={columns}
                                   hide-checkbox-column
-                                  oncustomtypea={handleCustomTypeA}
-                                  oncustomtypeb={handleCustomTypeB}>
+                                  oncustomtypea={handleCustomTypeA}>
     </c-custom-lightning-datatable>
 </template>
 ```
@@ -135,38 +173,39 @@ import { LightningElement, track } from 'lwc';
 export default class MyDataTable extends LightningElement {
 
     columns = [
-        { label: 'Record Name', fieldName: 'name', type: 'text'},
-        { label: 'Custom Type A', fieldName: 'id', type: 'customTypeA', typeAttributes: {
-                customValueA: { fieldName: 'customA' }
-            }
+        {
+            label: 'Record Name',
+            fieldName: 'name',
+            type: 'text'
         },
-        { label: 'Custom Type B', fieldName: 'id', type: 'customTypeB', typeAttributes: {
-                customValueB: { fieldName: 'customB' }
+        {
+            label: 'Custom Type A',
+            fieldName: 'id',
+            type: 'customTypeA',
+            typeAttributes: {
+                customValueA: {
+                    fieldName: 'index'
+                }
             }
         }
     ];
 
     @track data = [
-        { id: 1, name: 'Example 1', customA: 1, customB: 11, createdDate: '08-05-2020 '},
-        { id: 2, name: 'Example 2', customA: 2, customB: 12, createdDate: '08-05-2020 '},
-        { id: 3, name: 'Example 3', customA: 3, customB: 13, createdDate: '08-05-2020 '},
-        { id: 4, name: 'Example 4', customA: 4, customB: 14, createdDate: '08-05-2020 '},
-        { id: 5, name: 'Example 5', customA: 5, customB: 15, createdDate: '08-05-2020 '},
-        { id: 6, name: 'Example 6', customA: 6, customB: 16, createdDate: '08-05-2020 '},
-        { id: 7, name: 'Example 7', customA: 7, customB: 17, createdDate: '08-05-2020 '},
-        { id: 8, name: 'Example 8', customA: 8, customB: 18, createdDate: '08-05-2020 '}
+        { id: 1, name: 'Example 1', index: 1, createdDate: '08-05-2020'},
+        { id: 2, name: 'Example 2', index: 2, createdDate: '08-05-2020'},
+        { id: 3, name: 'Example 3', index: 3, createdDate: '08-05-2020'},
+        { id: 4, name: 'Example 4', index: 4, createdDate: '08-05-2020'},
+        { id: 5, name: 'Example 5', index: 5, createdDate: '08-05-2020'},
+        { id: 6, name: 'Example 6', index: 6, createdDate: '08-05-2020'},
+        { id: 7, name: 'Example 7', index: 7, createdDate: '08-05-2020'},
+        { id: 8, name: 'Example 8', index: 8, createdDate: '08-05-2020'}
     ];
 
     handleCustomTypeA(event) {
         const { recordId, newCustomValueA } = event.detail;
         console.log('CUSTOM TYPE A - ' + recordId + ' - ' + newCustomValueA);
-        this.data.find(item => item.id == recordId).customA = newCustomValueA;
-        this.data = [...this.data];
-    }
-
-    handleCustomTypeB(event) {
-        const { recordId, customValueB } = event.detail;
-        console.log('CUSTOM TYPE B - ' + recordId);
+        this.data.find(item => item.id == recordId).index = newCustomValueA;
+        this.data = [...this.data]; //datatable will be rerender
     }
 }
 ```
