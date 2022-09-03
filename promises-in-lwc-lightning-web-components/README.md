@@ -4,6 +4,27 @@ What is JavaScript Promise? How does it work with Lightning Web Component? What 
 
 Well, let's get down to the details.
 
+## Introduction
+
+**Javascript is a single threaded.**
+
+- *What does it mean?*
+
+Only one operation at a time. Code is executed line by line.
+
+![js](https://wordpress.beyondthecloud.dev/wp-content/uploads/2022/09/js.gif)
+
+- *What is the problem with this approach?*
+
+UI (your browser window) can freeze at the time of code execution. Is really bad from the user experience perspective.
+
+- *How we can resolve it?*
+
+Asynchronous JavaScript!
+You will get a **Promise** that code will be done some time in the future. You don't know when, but you will be able to detect it (then or await).
+
+![js-promise](https://wordpress.beyondthecloud.dev/wp-content/uploads/2022/09/js-promise.gif)
+
 ## Promise
 
 > **Promise** lets asynchronous methods return values like synchronous methods: instead of immediately returning the final value, the asynchronous method returns a promise to supply the value at some point in the future. ~ MDN
