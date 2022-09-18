@@ -5,7 +5,7 @@ No more talk. Let's begin!
 
 ## Architecture
 
-<img src="https://wordpress.beyondthecloud.dev/wp-content/uploads/2022/09/DvKc7Ym8dcR2.png" alt="salesforce to google rest api integration" />
+<img src="https://wordpress.beyondthecloud.dev/wp-content/uploads/2022/09/dkX3FXbRTHTk.png" alt="salesforce to google rest api integration" />
 
 ## Custom App
 **Google**
@@ -18,8 +18,8 @@ No more talk. Let's begin!
 2. Go to [API Library](https://console.cloud.google.com/apis/library).
  1. Make sure that previously created project is selected (picklist next to the Google Cloud logo).
  2. Click the needed API card.
- 3. **IMPORTANT!** Click `TRY THIS API`. It redirects you to complete documentation about the selected endpoint. Here you can find **HTTP Method**, **HTTP URL** and required **OAuth 2.0 Scopes**.
- 4. When you are fine with all permissions, that selected endpoint need enable API by hitting the `ENABLE` button on the previous page.
+ 3. **IMPORTANT!** Click `TRY THIS API`. It redirects you to complete documentation about the selected endpoint. Here you can find **HTTP Method**, **HTTP URL** and required **OAuth 2.0 Scopes**. Keep this page for the future use.
+ 4. When you are fine with all permissions enable API by hitting the `ENABLE` button on the previous page.
 3. Go to [OAuth consent screen](https://console.cloud.google.com/apis/credentials/consent).
  1. Execute all steps.
  2. Add all needed scopes for the selected Endpoint. Get scopes from step 2.3. **Note!** Be careful, add only necessary access! Scope defines what type of access your app can guarantee.
@@ -49,6 +49,7 @@ Customer Secret | Client Secret from step Custom App#6
 Authorize Endpoint URL | Leave default https://accounts.google.com/o/oauth2/auth
 Token Endpoint URL | Leave default https://accounts.google.com/o/oauth2/token
 User Info Endpoint URL | Leave default https://www.googleapis.com/auth2/v3/userinfo
+Default Scopes | `openId` + go to [API Library](https://console.cloud.google.com/apis/library) and check the documentation for your Google API. All available scopes you can find [here](https://developers.google.com/identity/protocols/oauth2/scopes)
 
 2. Hit `Save`.
 3. Copy the `Callback URL` from the `Salesforce Configuration` section.
@@ -75,11 +76,14 @@ URL | It depends on your API. Go to [API Library](https://console.cloud.google.c
 Identity Type | `Named Principal` *Use the same set of credentials for all users who access the external system from your org. Select this option if you designate one user account on the external system for all your Salesforce org users.* More details you can find [here](https://help.salesforce.com/s/articleView?id=sf.named_credentials_define.htm&type=5)
 Authentication Protocol | OAuth 2.0
 Authentication Provider | Provider created in the previous step.
-Scope | Go to [API Library](https://console.cloud.google.com/apis/library) and check the documentation for your Google API. All available scopes you can find [here](https://developers.google.com/identity/protocols/oauth2/scopes)
+Scope |  Optional. Specifies the scope of permissions to request for the access token. Your authentication provider determines the allowed values. The value that you enter replaces the Default Scopes value that’s defined in the specified authentication provider.
 
 3. Save
 
 ### New Named Credentials
+
+![Named Credentials and External Credentials](https://wordpress.beyondthecloud.dev/wp-content/uploads/2022/09/Pasted-image-20220918154808.png)
+
 #### External Credenitials
 
 [Create and Edit an External Credential](https://help.salesforce.com/s/articleView?id=sf.create_edit_external_credential.htm&type=5)
@@ -93,7 +97,7 @@ Label | External Credentials Label e.g Google
 Name | External Credentials Name e.g Google.
 Authentication Protocol | OAuth 2.0
 Authentication Provider | Provider created in the previous step.
-Scope | Go to [API Library](https://console.cloud.google.com/apis/library) and check the documentation for your Google API. All available scopes you can find [here](https://developers.google.com/identity/protocols/oauth2/scopes)
+Scope | Optional. Specifies the scope of permissions to request for the access token. Your authentication provider determines the allowed values. The value that you enter replaces the Default Scopes value that’s defined in the specified authentication provider.
 
 3. Save
 
@@ -128,9 +132,7 @@ Permission Set | Select Permission Set created in the previous step.
 Identity Type | Named Principal
 
 4. Assign Permission Set to your integration user.
-2. Click the arrow next to the `Permission Set Mappings` and hit `Authenticate`.
-
-
+5. Go back `External Credentials` page. Click the arrow next to the `Permission Set Mappings` and hit `Authenticate`.
 
 ## Apex Code
 
