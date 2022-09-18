@@ -146,24 +146,21 @@ Here you can find really simple code to make a callout.
 
 ```java
 public with sharing class GoogleWebService {
+    public static void makeCallout() {
+        HttpRequest request = new HttpRequest();
+        request.setMethod('REST API METHOD');
+        //request.setMethod('GET');
+        request.setEndpoint('callout:NAMED_CREDENTIALS_NAME/' + path);
+        //request.setEndpoint('callout:NAMED_CREDENTIALS_NAME' + '/users/me/calendarList');
 
- public static void makeCallout() {
+        Http http = new Http();
+        HTTPResponse response = http.send(request);
 
- HttpRequest request = new HttpRequest();
- request.setMethod('REST API METHOD');
- //request.setMethod('GET');
- request.setEndpoint('callout:NAMED_CREDENTIALS_NAME/' + path); .
- //request.setEndpoint('callout:NAMED_CREDENTIALS_NAME' + '/users/me/calendarList');
-
- Http http = new Http();
- HTTPResponse response = http.send(request);
-
- if (response.getStatusCode() == 200) {
- System.debug(response.getBody());
+        if (response.getStatusCode() == 200) {
+            System.debug(response.getBody());
         }
     }
 }
-
 ```
 
 ---
