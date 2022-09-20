@@ -165,9 +165,14 @@ public with sharing class GoogleWebService {
 
 ---
 
+If you have some questions feel free to ask in the comment section below. :)
+
 Was it helpful? Check out our other great posts [here](https://beyondthecloud.dev/blog).
 
 ---
 
 ## Resources
+- [Create and Edit an External Credential](https://help.salesforce.com/s/articleView?id=sf.create_edit_external_credential.htm&type=5)
 - [Create and Edit a Named Credentials](https://help.salesforce.com/s/articleView?id=sf.create_edit_named_credential.htm&type=5)
+- [Configure a Salesforce Authentication Provider](https://help.salesforce.com/s/articleView?id=sf.sso_provider_sfdc.htm&type=5)
+- [API Library](https://console.cloud.google.com/apis/library)
