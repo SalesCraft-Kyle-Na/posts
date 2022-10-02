@@ -29,6 +29,18 @@ You will able to see new fields:
 
 
 ## LWC
+### Standard
+
+- You can use [lightning-record-edit-form](https://developer.salesforce.com/docs/component-library/bundle/lightning-record-edit-form/documentation). Address fields anwill be display automatically.
+
+```html
+<template>
+    <lightning-record-edit-form object-api-name="Account" record-type-id="012000000000000AAA">
+        <lightning-input-field field-name="BillingAddress"> </lightning-input-field>
+    </lightning-record-edit-form>
+</template>
+```
+### Custom
 
 ```html
 <template>
@@ -246,10 +258,7 @@ public with sharing class AddressSelectorUiApi {
 }
 
 ```
-
-
-
-Result:
+### Result
 
 ```json
 {
@@ -330,12 +339,44 @@ Result:
 }
 ```
 
-### Consideration
-- Use of the Metadata API requires a user with the `ModifyAllData` or `MofifyMetadata` permissions.
+## Apex - without dependencies
 
+- Solution below does not provide dependencies between state and country.
+- You can find more details here: [Access the state and country picklist through Apex](https://help.salesforce.com/s/articleView?language=en_US&id=000338321&type=1)
+- I used `Country` and `State` wrappers mentioned above.
+
+```java
+Schema.DescribeFieldResult countryCodeFieldResult = User.CountryCode.getDescribe();
+
+List<Country> countries = new List<Country>();
+
+for (Schema.PicklistEntry countryField : countryCodeFieldResult.getPicklistValues()) {
+    countries.add(
+        new Country(countryField.getLabel(), countryField.getValue())
+    );
+}
+
+System.debug(countries);
+
+Schema.DescribeFieldResult stateCodeFieldResult = User.StateCode.getDescribe();
+
+List<State> states = new List<State>();
+
+for (Schema.PicklistEntry stateField : stateCodeFieldResult.getPicklistValues()) {
+
+    states.add(
+        new State(stateField.getLabel(), stateField.getValue(), '')
+    );
+}
+
+System.debug(states);
+```
 
 ## Resources
 
 - [Access the state and country picklist through Apex](https://help.salesforce.com/s/articleView?language=en_US&id=000338321&type=1)
 - [Get Values for a Picklist Field](https://developer.salesforce.com/docs/atlas.en-us.uiapi.meta/uiapi/ui_api_resources_picklist_values.htm)
 - [Enable and Disable State and Country/Territory Picklists](https://help.salesforce.com/s/articleView?id=sf.admin_state_country_picklist_enable.htm&type=5)
+- [Build UI for Picklists](https://developer.salesforce.com/docs/atlas.en-us.uiapi.meta/uiapi/ui_api_features_records_dependent_picklist.htm)
+- [AddressSettings](https://developer.salesforce.com/docs/atlas.en-us.api_meta.meta/api_meta/meta_addresssettings.htm)
+- [Apex Wrapper Salesforce Metadata API](https://github.com/financialforcedev/apex-mdapi)
