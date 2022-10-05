@@ -376,6 +376,18 @@ for (Schema.PicklistEntry stateField : stateCodeFieldResult.getPicklistValues())
 System.debug(states);
 ```
 
+## Repository
+
+[Github](https://github.com/beyond-the-cloud-dev/country-state-picklist)
+
+---
+
+If you have any questions feel free to ask in the comment section below. :)
+
+Was it helpful? Check out our other great posts [here](https://beyondthecloud.dev/blog).
+
+---
+
 ## Resources
 
 - [Access the state and country picklist through Apex](https://help.salesforce.com/s/articleView?language=en_US&id=000338321&type=1)
