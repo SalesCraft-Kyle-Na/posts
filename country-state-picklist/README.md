@@ -2,7 +2,7 @@ Hello there! 👋
 
 How to get country state dependent picklists in Apex or LWC?
 
-## Prequsition
+## Pre Steps
 
 First **required** step is to enable State and Country/territory picklists.
 
@@ -32,6 +32,8 @@ You will able to see new fields:
 ### Standard
 
 - You can use [lightning-record-edit-form](https://developer.salesforce.com/docs/component-library/bundle/lightning-record-edit-form/documentation). Address fields anwill be display automatically.
+
+![billing address picklist](https://wordpress.beyondthecloud.dev/wp-content/uploads/2022/10/Screenshot-2022-10-02-at-20.57.52.png)
 
 ```html
 <template>
