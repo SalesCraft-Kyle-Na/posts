@@ -1,10 +1,10 @@
 Hello there! 👋
 
-How to get country state dependent picklists in Apex or LWC?
+How to get country-state dependent picklists in Apex or LWC?
 
 ## Pre Steps
 
-First **required** step is to enable State and Country/territory picklists.
+The first **required** step is to enable State and Country/territory picklists.
 
 > When you enable state and country/territory picklists, the picklists are immediately available to users.
 
@@ -12,7 +12,7 @@ First **required** step is to enable State and Country/territory picklists.
 2. Finish [Converting](https://help.salesforce.com/s/articleView?id=sf.admin_state_country_picklists_convert_data.htm&type=5)
 3. On the State and Country/Territory Picklists setup page, click `Enable Picklists for Address Fields` to turn on the picklists
 
-You will able to see new fields:
+You will be able to see new fields:
 - User
   - User.CountryCode
   - User.StateCode
@@ -31,7 +31,7 @@ You will able to see new fields:
 ## LWC
 ### Standard
 
-- You can use [lightning-record-edit-form](https://developer.salesforce.com/docs/component-library/bundle/lightning-record-edit-form/documentation). Address fields anwill be display automatically.
+- You can use [lightning-record-edit-form](https://developer.salesforce.com/docs/component-library/bundle/lightning-record-edit-form/documentation). Address fields will be display automatically.
 
 ![billing address picklist](https://wordpress.beyondthecloud.dev/wp-content/uploads/2022/10/Screenshot-2022-10-02-at-20.57.52.png)
 
@@ -43,6 +43,8 @@ You will able to see new fields:
 </template>
 ```
 ### Custom
+
+![country state picklist](https://wordpress.beyondthecloud.dev/wp-content/uploads/2022/10/state.gif)
 
 ```html
 <template>
@@ -109,7 +111,7 @@ export default class AddressSelector extends LightningElement {
 
 ## Apex
 
-Let's define wrapper to keep retrived address settings.
+Let's define a wrapper to keep the retrived address settings.
 
 ```java
 public class Country {
@@ -139,7 +141,7 @@ public class State {
 
 - You need to deploy https://github.com/financialforcedev/apex-mdapi
 - Use of the Metadata API requires a user with the `ModifyAllData` or `MofifyMetadata` permissions.
-- In my opinion it's not the best solution.
+- In my opinion, it's not the best solution.
 
 ```java
 public with sharing class AddressSelectorMetadataApi {
@@ -345,7 +347,7 @@ public with sharing class AddressSelectorUiApi {
 
 - Solution below does not provide dependencies between state and country.
 - You can find more details here: [Access the state and country picklist through Apex](https://help.salesforce.com/s/articleView?language=en_US&id=000338321&type=1)
-- I used `Country` and `State` wrappers mentioned above.
+- I used the `Country` and `State` wrappers mentioned above.
 
 ```java
 Schema.DescribeFieldResult countryCodeFieldResult = User.CountryCode.getDescribe();
