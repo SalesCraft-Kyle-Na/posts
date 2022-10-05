@@ -31,7 +31,8 @@ You will be able to see new fields:
 ## LWC
 ### Standard
 
-- You can use [lightning-record-edit-form](https://developer.salesforce.com/docs/component-library/bundle/lightning-record-edit-form/documentation). Address fields will be display automatically.
+- You can use [lightning-record-edit-form](https://developer.salesforce.com/docs/component-library/bundle/lightning-record-edit-form/documentation). Address fields will be displayed automatically.
+- It should be your first choice, an out-of-the-box solution with only a few lines of code. However what if you cannot use `lightning-record-edit-form`? Let's jump to a custom solution.
 
 ![billing address picklist](https://wordpress.beyondthecloud.dev/wp-content/uploads/2022/10/Screenshot-2022-10-02-at-20.57.52.png)
 
@@ -43,6 +44,9 @@ You will be able to see new fields:
 </template>
 ```
 ### Custom
+
+- You don't need Apex, just LWC. All necessary information can be gathered via [UI Object Info API](https://developer.salesforce.com/docs/component-library/documentation/en/lwc/lwc.reference_wire_adapters_object_info).
+- The solution is very effective, the only con is that you need to preprocess state data because the retrieved format is kind of specific. :)
 
 ![country state picklist](https://wordpress.beyondthecloud.dev/wp-content/uploads/2022/10/state.gif)
 
@@ -111,7 +115,11 @@ export default class AddressSelector extends LightningElement {
 
 ## Apex
 
-Let's define a wrapper to keep the retrived address settings.
+We talked about LWC, but how to do it in Apex?
+I found two solutions to get country-state dependent picklists.
+
+First of all, let's define a simple wrapper.
+It allows us to keep the address settings clean way.
 
 ```java
 public class Country {
@@ -139,9 +147,9 @@ public class State {
 
 ### Metadata API
 
-- You need to deploy https://github.com/financialforcedev/apex-mdapi
+- You need to deploy https://github.com/financialforcedev/apex-mdapi before you start with the approach below.
 - Use of the Metadata API requires a user with the `ModifyAllData` or `MofifyMetadata` permissions.
-- In my opinion, it's not the best solution.
+- In my opinion, it's not the best solution. We don't want end users with `ModifyAllData` and `MofifyMetadata` permissions, so maybe it will be fine for the System Administrator, but not generally.
 
 ```java
 public with sharing class AddressSelectorMetadataApi {
@@ -185,6 +193,10 @@ public with sharing class AddressSelectorMetadataApi {
 ```
 
 ### UI API
+
+- Solution below uses [User Interface API](https://developer.salesforce.com/docs/atlas.en-us.uiapi.meta/uiapi/ui_api_resources_picklist_values.htm).
+- It's the same approach as for LWC#Custom mentioned above.
+- I would choose it when you need a country-state picklist in Apex.
 
 ```java
 public with sharing class AddressSelectorUiApi {
@@ -263,6 +275,9 @@ public with sharing class AddressSelectorUiApi {
 
 ```
 ### Result
+
+- Wrappers created at the beginning of the chapter give a clean data structure.
+- Below you will find result of `AddressSelectorMetadataApi.getAddressSettings()` or `AddressSelectorUiApi.getAddressSettings()`.
 
 ```json
 {
@@ -345,9 +360,10 @@ public with sharing class AddressSelectorUiApi {
 
 ## Apex - without dependencies
 
-- Solution below does not provide dependencies between state and country.
+- **Solution below does not provide dependencies between state and country**.
 - You can find more details here: [Access the state and country picklist through Apex](https://help.salesforce.com/s/articleView?language=en_US&id=000338321&type=1)
 - I used the `Country` and `State` wrappers mentioned above.
+- It's a really simple solution. Quite lovely if don't need dependencies between countries and states.
 
 ```java
 Schema.DescribeFieldResult countryCodeFieldResult = User.CountryCode.getDescribe();
@@ -375,7 +391,6 @@ for (Schema.PicklistEntry stateField : stateCodeFieldResult.getPicklistValues())
 
 System.debug(states);
 ```
-
 ## Repository
 
 [Github](https://github.com/beyond-the-cloud-dev/country-state-picklist)
